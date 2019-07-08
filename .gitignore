@@ -2,7 +2,10 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+*.idea
+#MAC STUFF
+*.DS_STORE
+.DS_STORE
 # C extensions
 *.so
 
