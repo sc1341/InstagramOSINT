@@ -22,5 +22,5 @@ The information includes:
 13. Business Category Name
 14. Is private?
 15. Is Verified?
-16. 
+16. Downloads Public Photos
 
