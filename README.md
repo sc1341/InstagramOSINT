@@ -24,3 +24,15 @@ The information includes:
 15. Is Verified?
 16. Downloads Public Photos
 
+# Usage
+Note: You must use python3.6 or greater due to the use of "f" strings
+
+1. `pip3 install -r requriments.txt`
+2. `python3 main.py --username USERNAME`
+
+
+
+# Disclaimer 
+
+I nor any creator or contributer are responsible for anything you do with this tool that could be concidered illegal. Do not break the law!
+
