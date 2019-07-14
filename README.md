@@ -38,5 +38,5 @@ The output format is a dict/json inside of a txt file in the directory created f
 
 # Disclaimer 
 
-I nor any creator or contributer are responsible for anything you do with this tool that could be concidered illegal. Do not break the law!
+I and any creator or contributer are not responsible for anything you do with this tool that could be concidered illegal. Do not break the law!
 
