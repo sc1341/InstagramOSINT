@@ -31,6 +31,10 @@ Note: You must use python3.6 or greater due to the use of "f" strings
 2. `python3 main.py --username USERNAME`
 
 
+# Output
+
+The output format is a dict/json inside of a txt file in the directory created for the profile that you scanned
+
 
 # Disclaimer 
 

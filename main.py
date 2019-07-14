@@ -26,7 +26,7 @@ class colors:
 
 class Scraper:
 
-    def __init__(self, username):
+    def __init__(self, username, downloadPhotos):
         # Username = username passed into __init__
         self.username = username
         # Make the directory that we are putting the files into
@@ -75,7 +75,8 @@ class Scraper:
 
         # Tries to scrape posts if it is a public profile
         self.save_data()
-        self.scrape_posts(profile_meta)
+        if downloadPhotos == True:
+            self.scrape_posts(profile_meta)
         self.print_data()
 
     def scrape_posts(self, profile_meta: str):
@@ -157,17 +158,19 @@ class Scraper:
 def parse_args():
     parser = argparse.ArgumentParser(description="Instagram OSINT tool")
     parser.add_argument("--username", help="profile username", required=True, nargs=1)
+    parser.add_argument("--downloadPhotos", help="Downloads the users photos if their account is public", required=False, action='store_true')
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
+    print(args)
     print(colors.OKBLUE + banner + colors.ENDC)
     if args.username == '':
         print("Please enter the username")
         sys.exit()
     else:
-        s = Scraper(args.username[0])
+        s = Scraper(username=args.username[0], downloadPhotos=args.downloadPhotos)
 
 
 if __name__ == '__main__':
