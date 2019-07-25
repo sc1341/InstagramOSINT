@@ -121,7 +121,14 @@ class Scraper:
             os.mkdir(self.username)
             os.chdir(self.username)
         except FileExistsError:
-            os.chdir(self.username)
+            num = 0
+            while os.path.exists(self.username):
+                num += 1
+                try:
+                    os.mkdir(self.username + str(num))
+                    os.chdir(self.username + str(num))
+                except FileExistsError:
+                    pass
 
     def save_data(self):
         """Saves the data to the username directory
@@ -165,9 +172,8 @@ def parse_args():
 
 def main():
     args = parse_args()
-    print(args)
     print(colors.OKBLUE + banner + colors.ENDC)
-    if args.username == '':
+    if args.username[0].strip() == '':
         print("Please enter the username")
         sys.exit()
     else:
