@@ -3,10 +3,10 @@
 # Coded by sc1341 
 # http://github.com/sc1341/InstagramOSINT
 # I am not responsible for anything you do with this script
-# This is the main script meant to be run from the command line
+# This is mean to be imported as a python module for use in custom applications
 #
 #
-import argparse
+
 from bs4 import BeautifulSoup
 import json
 import os
@@ -15,8 +15,6 @@ import random
 import string
 import sys
 import time
-
-from banner import banner
 
 
 class colors:
@@ -32,7 +30,8 @@ class colors:
 
 class InstagramOSINT:
 
-    def __init__(self, username, downloadPhotos):
+    def __init__(self, username):
+        self.username = username
         self.useragents = ['Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
                  'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
                  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
@@ -44,11 +43,25 @@ class InstagramOSINT:
                  'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
                  'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0']
 
-        # Username = username passed into __init__
-        self.username = username
-        # Make the directory that we are putting the files into
-        self.make_directory()
-        print(colors.OKGREEN + f"[*] Starting Scan on {username}" + colors.ENDC)
+        self.scrape_profile()
+
+
+    def __repr__(self):
+        return f"Current Username: {self.username}"
+
+    def __str__(self):
+        return f"Current Username: {self.username}"
+
+    def __getitem__(self, i):
+        return self.profile_data[i]
+
+
+    def scrape_profile(self):
+        """
+        This is the main scrape which takes the profile data retrieved and saves it into profile_data
+        :params: None
+        :return: profile data
+        """
         # Get the html data with the requests module
         r = requests.get(f'http://instagram.com/{self.username}', headers={'User-Agent': random.choice(self.useragents)})
         soup = BeautifulSoup(r.text, 'html.parser')
@@ -59,54 +72,51 @@ class InstagramOSINT:
         # Try to parse the content -- if it fails then the program exits
         try:
             text = general_data[0].get('content').split()
-            description = json.loads(description.get_text())
-            profile_meta = json.loads(more_data[3].get_text()[21:].strip(';'))
+            self.description = json.loads(description.get_text())
+            self.profile_meta = json.loads(more_data[3].get_text()[21:].strip(';'))
 
         except:
             print(colors.FAIL + f"Username {username} not found" + colors.ENDC)
-            sys.exit()
-        self.profile_data = {"Username": profile_meta['entry_data']['ProfilePage'][0]['graphql']['user']['username'],
-                             "Profile name": description['name'],
-                             "URL": description['mainEntityofPage']['@id'],
+            return 1
+        self.profile_data = {"Username": self.profile_meta['entry_data']['ProfilePage'][0]['graphql']['user']['username'],
+                             "Profile name": self.description['name'],
+                             "URL": self.description['mainEntityofPage']['@id'],
                              "Followers": text[0], "Following": text[2], "Posts": text[4],
                              "Bio": str(
-                                 profile_meta['entry_data']['ProfilePage'][0]['graphql']['user']['biography']),
-                             "profile_pic_url": str(profile_meta['entry_data']['ProfilePage'][0]['graphql']['user'][
+                                 self.profile_meta['entry_data']['ProfilePage'][0]['graphql']['user']['biography']),
+                             "profile_pic_url": str(self.profile_meta['entry_data']['ProfilePage'][0]['graphql']['user'][
                                                         'profile_pic_url_hd']),
                              "is_business_account": str(
-                                 profile_meta['entry_data']['ProfilePage'][0]['graphql']['user'][
+                                 self.profile_meta['entry_data']['ProfilePage'][0]['graphql']['user'][
                                      'is_business_account']),
-                             "connected_to_fb": str(profile_meta['entry_data']['ProfilePage'][0]['graphql']['user'][
+                             "connected_to_fb": str(self.profile_meta['entry_data']['ProfilePage'][0]['graphql']['user'][
                                                         'connected_fb_page']),
                              "externalurl": str(
-                                 profile_meta['entry_data']['ProfilePage'][0]['graphql']['user']['external_url']),
-                             "joined_recently": str(profile_meta['entry_data']['ProfilePage'][0]['graphql']['user'][
+                                 self.profile_meta['entry_data']['ProfilePage'][0]['graphql']['user']['external_url']),
+                             "joined_recently": str(self.profile_meta['entry_data']['ProfilePage'][0]['graphql']['user'][
                                                         'is_joined_recently']),
                              "business_category_name": str(
-                                 profile_meta['entry_data']['ProfilePage'][0]['graphql']['user'][
+                                 self.profile_meta['entry_data']['ProfilePage'][0]['graphql']['user'][
                                      'business_category_name']),
                              "is_private": str(
-                                 profile_meta['entry_data']['ProfilePage'][0]['graphql']['user']['is_private']),
+                                 self.profile_meta['entry_data']['ProfilePage'][0]['graphql']['user']['is_private']),
                              "is_verified": str(
-                                 profile_meta['entry_data']['ProfilePage'][0]['graphql']['user']['is_verified'])}
+                                 self.profile_meta['entry_data']['ProfilePage'][0]['graphql']['user']['is_verified'])}
 
-        # Tries to scrape posts if it is a public profile
-        self.save_data()
-        if downloadPhotos == True:
-            self.scrape_posts(profile_meta)
-        self.print_data()
+        return self.profile_data
 
-    def scrape_posts(self, profile_meta: str):
-        """Scrapes all posts and downloads thumbnails when necessary
+
+    def scrape_posts(self):
+        """Scrapes all posts and downloads them
         :return: none
         :param: none
         """
         if self.profile_data['is_private'].lower() == 'true':
             print("[*]Private profile, cannot scrape photos!")
+            return 1
         else:
-            print("[*]Getting Photos")
             posts = {}
-            for index, post in enumerate(profile_meta['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['edges']):
+            for index, post in enumerate(self.profile_meta['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['edges']):
                 os.mkdir(str(index))
                 posts[index] = {"Caption": str(post['node']['edge_media_to_caption']['edges'][0]['node']['text']),
                                 "Number of Comments": str(post['node']['edge_media_to_comment']['count']),
@@ -125,13 +135,13 @@ class InstagramOSINT:
                     r = requests.get(post['node']['thumbnail_resources'][0]['src'], headers={'User-Agent':random.choice(self.useragents)})
                     # Takes the content of r and puts it into the file
                     f.write(r.content)
-                    print("Got an Image")
 
             with open('posts.txt', 'w') as f:
                 f.write(json.dumps(posts))
 
     def make_directory(self):
         """Makes the profile directory and changes the cwd to it
+        this should only be called from the save_data function!
         :return: True
         """
         try:
@@ -152,13 +162,14 @@ class InstagramOSINT:
         :return: none
         :param: none
         """
+        self.make_directory()
         with open('data.txt', 'w') as f:
             f.write(json.dumps(self.profile_data))
         # Downloads the profile Picture
         self.download_profile_picture()
         print(f"Saved data to directory {os.getcwd()}")
 
-    def print_data(self):
+    def print_profile_data(self):
         """Prints out the data to the screen by iterating through the dict with it's key and value
         :return: none
         :param: none
@@ -179,23 +190,3 @@ class InstagramOSINT:
             r = requests.get(self.profile_data['profile_pic_url'], headers={'User-Agent':random.choice(self.useragents)})
             f.write(r.content)
 
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="Instagram OSINT tool")
-    parser.add_argument("--username", help="profile username", required=True, nargs=1)
-    parser.add_argument("--downloadPhotos", help="Downloads the users photos if their account is public", required=False, action='store_true')
-    return parser.parse_args()
-
-
-def main():
-    args = parse_args()
-    print(colors.OKBLUE + banner + colors.ENDC)
-    if args.username[0].strip() == '':
-        print("Please enter the username")
-        sys.exit()
-    else:
-        osint = InstagramOSINT(username=args.username[0], downloadPhotos=args.downloadPhotos)
-
-
-if __name__ == '__main__':
-    main()

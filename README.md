@@ -31,12 +31,31 @@ Note: You must use python3.6 or greater due to the use of "f" strings
 2. `python3 main.py --username USERNAME`
 
 
+Please note that InstagramOSINT.py is for importing as python module, this is for use in custom applications and not to be run from the command line
+
+
+
 # Output
 
 The output format is a dict/json inside of a txt file in the directory created for the profile that you scanned
 
 
+# API InstagramOSINT.py Usage
+
+This is useful when trying to apply this codebase to any projects. The API is really simple to use and uses python features to make it easier to use such as indexing
+
+Examples:
+
+`from InstagramOSINT import *`
+`instagram = InstagramOSINT(username='USERNAMEHERE')`
+`print(instagram.profile_data)`
+`print(instagram['Username'])`
+`instagram.print_profile_data()`
+`instagram.save_data()`
+`instagram.scrape_posts()`
+
+
+
 # Disclaimer 
 
-I, and any creator or contributer, are not responsible for anything you do with this tool that could be considered illegal. Do not break the law!
-
+I am not responsible for anything you do with this tool that could be considered illegal. Do not break the law!
