@@ -120,10 +120,9 @@ class InstagramOSINT:
                                     "Location": str(post['node']['location']),
                                     "Accessability Caption": str(post['node']['accessibility_caption'])
                                     }
-                    self.save_image(image_link, index)
-                    print(colors.OKGREEN + "Done!")
                 except KeyError as ke:
-                    print("\n" + colors.FAIL + "[X] Failed to get the key {}\nAttempting download anyway..".format(str(ke)), end="")
+                    print("\n" + colors.FAIL + "[X] Failed to get the key {}\nAttempting download anyway... ".format(str(ke)), end="")
+                try:
                     self.save_image(image_link, index)
                     print(colors.OKGREEN + "Done!")
                 except Exception as e:
