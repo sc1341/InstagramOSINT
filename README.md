@@ -47,11 +47,17 @@ This is useful when trying to apply this codebase to any projects. The API is re
 Examples:
 
 `from InstagramOSINT import *`
+
 `instagram = InstagramOSINT(username='USERNAMEHERE')`
+
 `print(instagram.profile_data)`
+
 `print(instagram['Username'])`
+
 `instagram.print_profile_data()`
+
 `instagram.save_data()`
+
 `instagram.scrape_posts()`
 
 
