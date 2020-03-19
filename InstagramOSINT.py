@@ -16,17 +16,7 @@ import string
 import sys
 import time
 
-
-class colors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
+from colors import colors
 
 class InstagramOSINT:
 
@@ -106,39 +96,53 @@ class InstagramOSINT:
         return self.profile_data
 
 
-    def scrape_posts(self):
+    def scrape_posts(self, high_res=False):
         """Scrapes all posts and downloads them
         :return: none
-        :param: none
+        :param: high_res
         """
         if self.profile_data['is_private'].lower() == 'true':
             print("[*]Private profile, cannot scrape photos!")
             return 1
         else:
             posts = {}
+            if not os.path.isdir(os.path.join(os.getcwd(), self.username)):
+                os.mkdir(self.username)
             for index, post in enumerate(self.profile_meta['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['edges']):
-                os.mkdir(str(index))
-                posts[index] = {"Caption": str(post['node']['edge_media_to_caption']['edges'][0]['node']['text']),
-                                "Number of Comments": str(post['node']['edge_media_to_comment']['count']),
-                                "Comments Disabled": str(post['node']['comments_disabled']),
-                                "Taken At Timestamp": str(post['node']['taken_at_timestamp']),
-                                "Number of Likes": str(post['node']['edge_liked_by']['count']),
-                                "Location": str(post['node']['location']),
-                                "Accessability Caption": str(post['node']['accessibility_caption'])
-                                }
-
-                # Downloads the thumbnails of the post
-                # Picture is just an int index of the url in the list
-                with open(f'{os.getcwd()}/{index}/' + ''.join([random.choice(string.ascii_uppercase) for x in range(random.randint(1, 9))]) + '.jpg', 'wb') as f:
-                    # Delay the request times randomly (be nice to Instagram)
-                    time.sleep(random.randint(5, 10))
-                    r = requests.get(post['node']['thumbnail_resources'][0]['src'], headers={'User-Agent':random.choice(self.useragents)})
-                    # Takes the content of r and puts it into the file
-                    f.write(r.content)
+                try:
+                    print(colors.OKGREEN + "[*] Downloading image... ", end="")
+                    image_link = post['node']['display_url'] if high_res else post['node']['thumbnail_resources'][0]['src']
+                    posts[index] = {"Caption": str(post['node']['edge_media_to_caption']['edges'][0]['node']['text']),
+                                    "Number of Comments": str(post['node']['edge_media_to_comment']['count']),
+                                    "Comments Disabled": str(post['node']['comments_disabled']),
+                                    "Taken At Timestamp": str(post['node']['taken_at_timestamp']),
+                                    "Number of Likes": str(post['node']['edge_liked_by']['count']),
+                                    "Location": str(post['node']['location']),
+                                    "Accessability Caption": str(post['node']['accessibility_caption'])
+                                    }
+                except KeyError as ke:
+                    print("\n" + colors.FAIL + "[X] Failed to get the key {}\nAttempting download anyway... ".format(str(ke)), end="")
+                try:
+                    self.save_image(image_link, index)
+                    print(colors.OKGREEN + "Done!")
+                except Exception as e:
+                    print(colors.FAIL + "[X] Failed to download", str(e))
 
             with open('posts.txt', 'w') as f:
                 f.write(json.dumps(posts))
 
+    def save_image(self, link, index):
+        # Downloads the thumbnails of the post
+        # Picture is just an int index of the url in the list
+        with open(f'{os.getcwd()}/{self.username}/{index}-' + ''.join([random.choice(string.ascii_uppercase) for x in range(10)]) + '.jpg', 'wb') as f:
+            # Delay the request times randomly (be nice to Instagram)
+            time.sleep(random.randint(5, 10))
+            r = requests.get(link, headers={'User-Agent':random.choice(self.useragents)})
+            # Takes the content of r and puts it into the file
+            if r.status_code != 200:
+                raise FileNotFoundError("Could not find the file!")
+            f.write(r.content)
+            
     def make_directory(self):
         """Makes the profile directory and changes the cwd to it
         this should only be called from the save_data function!
