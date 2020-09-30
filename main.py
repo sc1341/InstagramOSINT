@@ -133,8 +133,8 @@ class InstagramOSINT:
                 # Picture is just an int index of the url in the list
                 with open(f'{os.getcwd()}/{index}/' + ''.join([random.choice(string.ascii_uppercase) for x in range(random.randint(1, 9))]) + '.jpg', 'wb') as f:
                     # Delay the request times randomly (be nice to Instagram)
-                    time.sleep(random.randint(5, 10))
-                    r = requests.get(post['node']['thumbnail_resources'][0]['src'], headers={'User-Agent':random.choice(self.useragents)})
+                    time.sleep(random.randint(3, 5))
+                    r = requests.get(post['node']['thumbnail_src'], headers={'User-Agent':random.choice(self.useragents)})
                     # Takes the content of r and puts it into the file
                     f.write(r.content)
                     print("Got an Image")
