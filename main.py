@@ -61,10 +61,9 @@ class InstagramOSINT:
         try:
             self.text = general_data[0].get('content').split()
             # This is the profile description data
-            self.description = json.loads(description.get_text())
+            self.description = json.loads(description.contents[0])
             # This is the javascript json that is passed into json.loads()
-            self.profile_meta = json.loads(more_data[3].get_text()[21:].strip(';'))
-
+            self.profile_meta = json.loads(more_data[3].contents[0][21:].strip(';'))
         except:
             print(colors.FAIL + f"Username {self.username} not found" + colors.ENDC)
             sys.exit()
