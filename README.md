@@ -2,7 +2,13 @@
 
 
 The Instagram OSINT Tool gets a range of information from an Instagram account that you normally wouldn't be able to get
-from just looking at their profile
+from just looking at their profile.
+
+# Disclaimer 
+
+warning: **FOR EDUCATIONAL PURPOSES ONLY** Unethical use of this tool could put you behind bars.
+Use Responsibly!
+
 
 The information includes:
 
@@ -59,9 +65,3 @@ Examples:
 `instagram.save_data()`
 
 `instagram.scrape_posts()`
-
-
-
-# Disclaimer 
-
-I am not responsible for anything you do with this tool that could be considered illegal. Do not break the law!
