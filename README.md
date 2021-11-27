@@ -1,15 +1,13 @@
 # Instagram OSINT Tool
 
-
 The Instagram OSINT Tool gets a range of information from an Instagram account that you normally wouldn't be able to get
 from just looking at their profile
 
 The information includes:
 
-
-1. Username
-2. Profile Name
-3. URL
+1. Usernames
+2. Profile Names
+3. URL's'
 4. Followers
 5. Following
 6. Number of Posts
@@ -25,20 +23,17 @@ The information includes:
 16. Downloads Public Photos
 
 # Usage
+
 Note: You must use python3.6 or greater due to the use of "f" strings
 
 1. `pip3 install -r requirements.txt`
 2. `python3 main.py --username USERNAME`
 
-
 Please note that InstagramOSINT.py is for importing as python module, this is for use in custom applications and not to be run from the command line
-
-
 
 # Output
 
 The output format is a dict/json inside of a txt file in the directory created for the profile that you scanned
-
 
 # API InstagramOSINT.py Usage
 
@@ -60,8 +55,6 @@ Examples:
 
 `instagram.scrape_posts()`
 
-
-
-# Disclaimer 
+# Disclaimer
 
 I am not responsible for anything you do with this tool that could be considered illegal. Do not break the law!
