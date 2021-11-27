@@ -15,9 +15,9 @@ The information includes:
 6. Number of Posts
 7. Bio
 8. Profile Picture URL
-9. Is Business Account?
-10. Connected to a FB account?
-11. External URL
+9. Is Business Account's?
+10. Connected to a FB account's?
+11. External URL's
 12. Joined Recently?
 13. Business Category Name
 14. Is private?
