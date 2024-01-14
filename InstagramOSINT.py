@@ -76,7 +76,7 @@ class InstagramOSINT:
             self.profile_meta = json.loads(more_data[3].get_text()[21:].strip(';'))
 
         except:
-            print(colors.FAIL + f"Username {username} not found" + colors.ENDC)
+            print(colors.FAIL + f"Username {self.username} not found" + colors.ENDC)
             return 1
         self.profile_data = {"Username": self.profile_meta['entry_data']['ProfilePage'][0]['graphql']['user']['username'],
                              "Profile name": self.description['name'],
